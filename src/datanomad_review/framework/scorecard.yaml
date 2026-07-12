@@ -1,0 +1,90 @@
+# datanomad-review — Scorecard definition
+# Cada dimensión pesa sobre 100. Cada criterio se puntúa 0 (no existe),
+# 1 (parcial/ad-hoc), 2 (sistemático). Score dimensión = puntos/max*100.
+
+version: 0.1.0
+dimensions:
+  architecture:
+    name: Arquitectura
+    weight: 0.18
+    criteria:
+      - id: ARC-01
+        text: Existe un diagrama de arquitectura actualizado (< 6 meses)
+      - id: ARC-02
+        text: El lake/warehouse tiene capas definidas (raw/curated/serving)
+      - id: ARC-03
+        text: Los pipelines corren sobre un orquestador con retries y alertas
+      - id: ARC-04
+        text: No hay pipelines duplicados calculando la misma métrica
+      - id: ARC-05
+        text: La infraestructura de datos está en IaC (Terraform u otro)
+  governance:
+    name: Gobierno
+    weight: 0.16
+    criteria:
+      - id: GOV-01
+        text: Cada dataset crítico tiene un dueño declarado
+      - id: GOV-02
+        text: Existe catálogo de datos consultable por el negocio
+      - id: GOV-03
+        text: Hay lineage navegable de fuente a dashboard
+      - id: GOV-04
+        text: Las fuentes nuevas entran vía data contract
+  quality:
+    name: Calidad
+    weight: 0.15
+    criteria:
+      - id: QUA-01
+        text: Los modelos críticos tienen tests (unicidad, not-null, referencial)
+      - id: QUA-02
+        text: Hay monitoreo de freshness con SLAs definidos
+      - id: QUA-03
+        text: Los incidentes de datos tienen proceso (detección→aviso→postmortem)
+      - id: QUA-04
+        text: Los consumidores conocen el nivel de confianza de cada dataset
+  cost:
+    name: Costo (FinOps)
+    weight: 0.16
+    criteria:
+      - id: COS-01
+        text: El costo de datos se atribuye por equipo/dominio (tags/labels)
+      - id: COS-02
+        text: Existen presupuestos y alertas de desviación
+      - id: COS-03
+        text: Las tablas grandes están particionadas/clusterizadas
+      - id: COS-04
+        text: Hay lifecycle de storage (hot→cold→archive)
+      - id: COS-05
+        text: Se revisan y apagan recursos sin uso periódicamente
+  scalability:
+    name: Escalabilidad
+    weight: 0.10
+    criteria:
+      - id: SCA-01
+        text: La plataforma soporta 10x volumen sin rediseño mayor
+      - id: SCA-02
+        text: Cargas batch/streaming separadas y dimensionadas
+      - id: SCA-03
+        text: Onboarding de una fuente nueva toma días, no meses
+  security:
+    name: Seguridad
+    weight: 0.11
+    criteria:
+      - id: SEC-01
+        text: PII clasificada y con acceso diferenciado (column/row-level)
+      - id: SEC-02
+        text: Principio de mínimo privilegio en accesos a datos
+      - id: SEC-03
+        text: Auditoría de accesos habilitada y revisada
+  ai_readiness:
+    name: AI-Readiness
+    weight: 0.14
+    criteria:
+      - id: AIR-01
+        text: Existe capa curada y documentada como fuente única para ML/GenAI
+      - id: AIR-02
+        text: Features/datasets para IA tienen freshness y calidad monitoreadas
+      - id: AIR-03
+        text: El acceso a datos para IA respeta la clasificación de PII
+      - id: AIR-04
+        text: Los experimentos de IA son reproducibles (versionado de datos)
