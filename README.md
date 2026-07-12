@@ -62,7 +62,7 @@ datanomad-review scan aws-cost --profile mi-perfil
 datanomad-review assess --interactive
 ```
 
-Toda ejecución es **read-only**. Ver [Safety patterns](docs/safety-patterns.md).
+Toda ejecución es **read-only**. Ver [Safety patterns](docs/safety-patterns.md) y los [permisos mínimos por scanner](docs/permissions.md) (roles GCP / política IAM AWS).
 
 ### Así se ve
 
