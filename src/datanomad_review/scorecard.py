@@ -15,13 +15,16 @@ class Finding:
     severity: str      # critical | high | medium | low
     dimension: str     # cost | architecture | governance | quality | ...
     evidence: str = ""
-    fix: str = ""      # runbook or short remediation
+    fix: str = ""            # runbook or short remediation
+    impact_usd: str = ""     # estimated USD impact (filled by plugins/quantifiers)
 
     def render(self) -> str:
         icon = {"critical": "🔴", "high": "🟠", "medium": "🟡", "low": "⚪"}.get(self.severity, "⚪")
         out = f"{icon} [{self.code}] {self.title}"
         if self.evidence:
             out += f"\n     evidencia: {self.evidence}"
+        if self.impact_usd:
+            out += f"\n     impacto: {self.impact_usd}"
         if self.fix:
             out += f"\n     fix: {self.fix}"
         return out
