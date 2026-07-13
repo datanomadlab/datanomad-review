@@ -1,0 +1,70 @@
+name: "datanomad query-cost"
+description: >-
+  Estima el costo de las queries BigQuery de un PR vía dry-run (read-only,
+  no las ejecuta) y comenta el resultado. Requiere autenticación previa a GCP
+  (por ejemplo google-github-actions/auth con Workload Identity).
+branding:
+  icon: dollar-sign
+  color: blue
+
+inputs:
+  paths:
+    description: "Archivos .sql o directorios a analizar"
+    required: false
+    default: "."
+  project:
+    description: "GCP project id para el dry-run"
+    required: true
+  fail-over-usd:
+    description: "Falla el job si el costo total estimado por ejecución supera este monto"
+    required: false
+    default: ""
+  price-per-tib:
+    description: "Precio USD/TiB (default: lista pública on-demand de BigQuery)"
+    required: false
+    default: "6.25"
+  comment:
+    description: "Comentar el resultado en el PR (requiere permiso pull-requests: write)"
+    required: false
+    default: "true"
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+
+    - name: Instalar datanomad-review
+      shell: bash
+      run: pip install --quiet 'datanomad-review[gcp]'
+
+    - name: Estimar costo de queries (dry-run)
+      id: query_cost
+      shell: bash
+      run: |
+        set +e
+        EXTRA=""
+        if [ -n "${{ inputs.fail-over-usd }}" ]; then
+          EXTRA="--fail-over-usd ${{ inputs.fail-over-usd }}"
+        fi
+        datanomad-query-cost ${{ inputs.paths }} \
+          --project "${{ inputs.project }}" \
+          --price-per-tib "${{ inputs.price-per-tib }}" \
+          $EXTRA --format github > "$RUNNER_TEMP/query-cost.md"
+        echo "exit_code=$?" >> "$GITHUB_OUTPUT"
+        cat "$RUNNER_TEMP/query-cost.md" >> "$GITHUB_STEP_SUMMARY"
+
+    - name: Comentar en el PR
+      if: inputs.comment == 'true' && github.event_name == 'pull_request'
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        gh pr comment "${{ github.event.pull_request.number }}" \
+          --repo "${{ github.repository }}" \
+          --body-file "$RUNNER_TEMP/query-cost.md"
+
+    - name: Propagar resultado
+      shell: bash
+      run: exit ${{ steps.query_cost.outputs.exit_code }}

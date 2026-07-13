@@ -1,0 +1,16 @@
+# Hook para pre-commit (https://pre-commit.com). Uso en el repo del usuario:
+#
+#   repos:
+#     - repo: https://github.com/datanomadlab/datanomad-review
+#       rev: v0.3.0
+#       hooks:
+#         - id: datanomad-query-cost
+#           args: ["--project", "mi-proyecto-gcp", "--fail-over-usd", "25"]
+#
+- id: datanomad-query-cost
+  name: datanomad query-cost (BigQuery dry-run)
+  description: Estima el costo de las queries .sql modificadas vía dry-run de BigQuery.
+  entry: datanomad-query-cost
+  language: python
+  files: '\.sql$'
+  additional_dependencies: ["google-cloud-bigquery>=3.0"]

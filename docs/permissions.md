@@ -67,6 +67,18 @@ Credenciales: perfil estándar de `~/.aws/credentials` (`--profile mi-perfil`) o
 
 Autoevaluación guiada por los checklists; genera el scorecard sin conectarse a nada.
 
+## `billing-diff` y `teardown` — sin credenciales
+
+Trabajan sobre exports CSV locales que tú descargas de la consola ([formatos soportados](billing-formats.md)). No se conectan a ninguna nube; los IDs de cuenta y emails del export se descartan al parsear.
+
+## `query-cost <paths...> --project <id>` — GCP
+
+Qué hace: por cada archivo `.sql` ejecuta un **dry-run** de BigQuery (`dry_run=True`). Un dry-run no ejecuta la query, no lee datos y **no factura**: BigQuery solo responde cuántos bytes escanearía.
+
+Permiso mínimo: `bigquery.jobs.create` sobre el proyecto — incluido en `roles/bigquery.jobUser` (el mismo rol que ya usa `scan bigquery`).
+
+En CI, autentica antes con [google-github-actions/auth](https://github.com/google-github-actions/auth) (Workload Identity); el action de query-cost no maneja credenciales.
+
 ## Multi-cloud
 
 Cada scanner se corre por separado y suma hallazgos al mismo marco (los códigos AP-* son transversales):
