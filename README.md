@@ -95,7 +95,7 @@ Toda ejecución es **read-only**. Ver [Safety patterns](docs/safety-patterns.md)
 
 ### query-cost en CI (GitHub Action)
 
-La marca de tu equipo de datos en cada PR: comenta el costo estimado de cada query y falla el job si supera el umbral.
+El costo estimado de cada query, comentado en cada PR; el job falla si supera el umbral.
 
 ```yaml
 # .github/workflows/query-cost.yml

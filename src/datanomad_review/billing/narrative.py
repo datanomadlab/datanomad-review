@@ -19,12 +19,12 @@ PROJECT_CONCENTRATION_PCT = 60    # BILL-03: un proyecto concentra el delta
 
 
 def _money(x: float) -> str:
-    return f"${x:,.0f}"
+    return f"${x:,.0f}".replace(",", ".")  # punto de miles (convención de marca LATAM)
 
 
 def _signed(x: float) -> str:
     sign = "+" if x >= 0 else "-"
-    return f"{sign}${abs(x):,.0f}"
+    return f"{sign}${abs(x):,.0f}".replace(",", ".")
 
 
 def _direction(delta: float) -> str:

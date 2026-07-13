@@ -24,7 +24,7 @@ def gcp_diff():
 def test_text_narrative_explains_increase(gcp_diff):
     out = narrative.render_text(gcp_diff, top=3)
 
-    assert "pasó de $12,450 a $16,890" in out
+    assert "pasó de $12.450 a $16.890" in out  # punto de miles (marca)
     assert "subió 35.7%" in out
     assert "razones explican el 92% del aumento" in out
     assert "BigQuery" in out
