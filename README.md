@@ -20,6 +20,7 @@ Típico resultado en plataformas no gobernadas: **20–40% de ahorro en costo de
 
 - [Por qué existe esto](#por-qué-existe-esto)
 - [Quick start](#quick-start)
+- [Herramientas](#herramientas)
 - [Cómo funciona](#cómo-funciona)
 - [Las 7 dimensiones](#las-7-dimensiones)
 - [Metodología F.L.O.W.](#metodología-flow)
@@ -63,9 +64,72 @@ datanomad-review scan aws-cost --profile mi-perfil
 
 # Autoevaluación guiada (sin credenciales): genera scorecard desde los checklists
 datanomad-review assess --interactive
+
+# ¿Por qué subió la cuenta este mes? Dos exports CSV de facturación, cero credenciales
+datanomad-review billing-diff enero.csv febrero.csv
+
+# Teardown anonimizado listo para publicar (montos redondeados, proyectos ocultos)
+datanomad-review teardown enero.csv febrero.csv --sector retail -o teardown.md
+
+# ¿Cuánto costará esta query? Dry-run de BigQuery, no ejecuta nada
+pip install "datanomad-review[gcp]"
+datanomad-review query-cost models/ --project mi-proyecto-gcp --fail-over-usd 25
 ```
 
 Toda ejecución es **read-only**. Ver [Safety patterns](docs/safety-patterns.md) y los [permisos mínimos por scanner](docs/permissions.md) (roles GCP / política IAM AWS).
+
+## Herramientas
+
+| Comando | Qué hace | Credenciales |
+|---|---|---|
+| `demo` | Demo autocontenida sobre un proyecto de ejemplo | Ninguna |
+| `scan dbt <path>` | Revisión estática de un proyecto dbt | Ninguna |
+| `scan bigquery` | Costo y arquitectura BigQuery (metadata + jobs) | GCP read-only |
+| `scan aws-cost` | Spikes, gasto sin tag y top servicios (Cost Explorer) | AWS read-only |
+| `assess --interactive` | Autoevaluación guiada → scorecard | Ninguna |
+| `billing-diff <antes> <después>` | Explica en lenguaje humano por qué cambió la cuenta: qué servicios, qué proyectos, % del delta | Ninguna (CSV local) |
+| `teardown <antes> [<después>]` | Genera un teardown anonimizado en markdown, listo para LinkedIn/newsletter | Ninguna (CSV local) |
+| `query-cost <paths...>` | Estima el costo de queries `.sql` vía dry-run y bloquea el desperdicio en CI | GCP (`bigquery.jobs.create`) |
+
+`billing-diff` y `query-cost` también se instalan como comandos standalone: `datanomad-billing-diff` y `datanomad-query-cost`. Formatos CSV soportados (GCP Cost table, AWS CUR, Cost Explorer, genérico): [`docs/billing-formats.md`](docs/billing-formats.md).
+
+### query-cost en CI (GitHub Action)
+
+La marca de tu equipo de datos en cada PR: comenta el costo estimado de cada query y falla el job si supera el umbral.
+
+```yaml
+# .github/workflows/query-cost.yml
+on: pull_request
+permissions:
+  contents: read
+  pull-requests: write
+  id-token: write
+jobs:
+  query-cost:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
+          service_account: ${{ secrets.GCP_SA_EMAIL }}
+      - uses: datanomadlab/datanomad-review@v0.3.0
+        with:
+          paths: models/
+          project: mi-proyecto-gcp
+          fail-over-usd: "25"
+```
+
+O como hook de [pre-commit](https://pre-commit.com):
+
+```yaml
+repos:
+  - repo: https://github.com/datanomadlab/datanomad-review
+    rev: v0.3.0
+    hooks:
+      - id: datanomad-query-cost
+        args: ["--project", "mi-proyecto-gcp", "--fail-over-usd", "25"]
+```
 
 ### Así se ve
 
@@ -140,9 +204,15 @@ Guías paso a paso para ejecutar los fixes sin downtime: [`docs/runbooks/`](docs
 
 - [x] Framework de checklists + scorecard (YAML)
 - [x] CLI con scanners read-only: dbt, BigQuery, AWS Cost Explorer
+- [x] `billing-diff`: explica el cambio de la cuenta desde dos exports CSV (GCP/AWS)
+- [x] `teardown`: teardown anonimizado en markdown desde exports de facturación
+- [x] `query-cost`: dry-run de queries BigQuery + GitHub Action + hook de pre-commit
+- [x] Sistema de plugins (entry points) para quantifiers, renderers y plantillas
+- [ ] Reporte HTML del scorecard (disponible vía plugins)
+- [ ] `zombie-hunter`: recursos sin uso (discos, IPs, clusters) con ahorro estimado
+- [ ] AI-readiness score como web estática compartible
 - [ ] Scanner GCP Billing / BigQuery INFORMATION_SCHEMA profundo
 - [ ] Scanner Redshift / Databricks
-- [ ] Reporte HTML del scorecard
 - [ ] Agente (Claude Code subagent) que ejecuta la revisión end-to-end
 - [ ] Integración con [aws-cost-optimization-agent](https://github.com/sercasti/aws-cost-optimization-agent) para la dimensión de costo AWS
 
@@ -150,7 +220,7 @@ Contribuciones bienvenidas — abre un issue o PR.
 
 ## ¿Quieres que aplique esto a tu plataforma?
 
-Este framework es libre y puedes correrlo tú mismo. Si prefieres que un experto lo aplique a tu entorno real — con interpretación, roadmap accionable y ejecución — eso es el **Data Platform Health Check** de [DatanomadLab](https://www.datanomadlab.com): 3 semanas, precio fijo, 100% read-only, y garantía 3× (si no identifico valor de al menos 3 veces el fee, devuelvo el 100%). El roadmap alimenta las dos consultorías de DatanomadLab: **FinOps** (administración y optimización de gastos de nube) y **Data Engineering** (arquitectura y operaciones de datos).
+Este framework es libre y puedes correrlo tú mismo: la CLI detecta el **primer nivel de hallazgos** con tus propios datos. La cuantificación fina del desperdicio en USD, la interpretación contra benchmarks y el roadmap de remediación priorizado son el **Data Platform Health Check** de [DatanomadLab](https://www.datanomadlab.com): 3 semanas, precio fijo, 100% read-only, y garantía 3× (si no identifico valor de al menos 3 veces el fee, devuelvo el 100%). El roadmap alimenta las dos consultorías de DatanomadLab: **FinOps** (administración y optimización de gastos de nube) y **Data Engineering** (arquitectura y operaciones de datos).
 
 📩 **[Agenda un diagnóstico inicial de 30 min, sin costo →](https://www.datanomadlab.com/#contacto)**
 
