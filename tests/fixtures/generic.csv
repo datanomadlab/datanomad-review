@@ -1,0 +1,4 @@
+service,cost,project
+BigQuery,100.0,proj-a
+Cloud Storage,50.5,proj-b
+BigQuery,25.0,proj-b

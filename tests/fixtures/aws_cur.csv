@@ -1,0 +1,6 @@
+identity/LineItemId,lineItem/UsageAccountId,lineItem/ProductCode,lineItem/LineItemType,lineItem/UnblendedCost
+a1b2c3,111122223333,AmazonEC2,Usage,1200.50
+d4e5f6,111122223333,AmazonEC2,Usage,799.50
+g7h8i9,111122223333,AmazonS3,Usage,500.00
+j1k2l3,444455556666,AmazonRDS,Usage,1500.00
+m4n5o6,444455556666,AmazonRDS,Usage,not-a-number

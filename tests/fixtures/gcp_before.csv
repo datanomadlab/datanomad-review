@@ -1,0 +1,5 @@
+﻿Project name,Project ID,Service description,Cost ($),Discounts ($),Subtotal ($)
+analytics-prod,analytics-prod-1234,BigQuery,"4,350.00",-230.00,"4,120.00"
+analytics-prod,analytics-prod-1234,Cloud Storage,"2,100.00",0.00,"2,100.00"
+core-infra,core-infra-9876,Compute Engine,"5,430.00",-200.00,"5,230.00"
+core-infra,core-infra-9876,Cloud Logging,"1,000.00",0.00,"1,000.00"

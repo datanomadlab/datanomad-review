@@ -1,0 +1,7 @@
+Project name,Project ID,Service description,Cost ($),Discounts ($),Subtotal ($)
+analytics-prod,analytics-prod-1234,BigQuery,"7,050.00",-320.00,"6,730.00"
+analytics-prod,analytics-prod-1234,Cloud Storage,"3,080.00",0.00,"3,080.00"
+analytics-prod,analytics-prod-1234,Vertex AI,490.00,0.00,490.00
+core-infra,core-infra-9876,Compute Engine,"5,310.00",-200.00,"5,110.00"
+core-infra,core-infra-9876,Cloud Logging,"1,480.00",0.00,"1,480.00"
+Total,,,"17,410.00",-520.00,"16,890.00"
