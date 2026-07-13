@@ -1,6 +1,7 @@
 """datanomad-review CLI.
 
 Commands:
+    demo                              Self-contained demo (no credentials, no network)
     scan dbt <path>                   Static dbt project review (no credentials)
     scan bigquery --project <id>      Read-only BigQuery cost/architecture scan
     scan aws-cost [--profile <name>]  Read-only AWS Cost Explorer scan
@@ -42,6 +43,12 @@ def cmd_scan(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_demo(args: argparse.Namespace) -> int:
+    from .demo import run_demo
+    run_demo(_print_findings)
+    return 0
+
+
 def cmd_assess(args: argparse.Namespace) -> int:
     definition = Scorecard.load_definition()
     card = Scorecard()
@@ -78,6 +85,9 @@ def main(argv: list[str] | None = None) -> int:
     p_scan.add_argument("--region", default="region-us", help="BQ region for INFORMATION_SCHEMA (default region-us)")
     p_scan.add_argument("--profile", help="AWS profile name (aws-cost)")
     p_scan.set_defaults(func=cmd_scan)
+
+    p_demo = sub.add_parser("demo", help="Self-contained demo on a bundled sample project")
+    p_demo.set_defaults(func=cmd_demo)
 
     p_assess = sub.add_parser("assess", help="Guided self-assessment -> scorecard")
     p_assess.add_argument("--interactive", action="store_true", default=True)

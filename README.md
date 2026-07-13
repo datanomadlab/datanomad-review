@@ -8,6 +8,8 @@
 > Methodology, scorecard, anti-pattern catalog, runbooks, safety patterns, and read-only scanners.
 > Built and maintained by [DatanomadLab](https://www.datanomadlab.com) · MIT licensed.
 
+![Demo de datanomad-review](docs/assets/demo.gif)
+
 `datanomad-review` es un "Well-Architected para plataformas de datos": evalúa una plataforma en **7 dimensiones** — Arquitectura, Gobierno, Calidad, Costo (FinOps), Escalabilidad, Seguridad y **AI-Readiness** — y produce un **scorecard** con un **roadmap priorizado**.
 
 Típico resultado en plataformas no gobernadas: **20–40% de ahorro en costo de datos** + una ruta clara para dejar los datos listos para IA.
@@ -44,8 +46,9 @@ Los frameworks de cloud (Well-Architected) revisan infraestructura, pero **no re
 
 ```bash
 pip install datanomad-review
-# (o la última versión de desarrollo)
-pip install git+https://github.com/datanomadlab/datanomad-review
+
+# Demo autocontenida: escanea un proyecto de ejemplo incluido (sin credenciales, sin red)
+datanomad-review demo
 
 # Revisión estática de un proyecto dbt (sin credenciales)
 datanomad-review scan dbt ./mi-proyecto-dbt

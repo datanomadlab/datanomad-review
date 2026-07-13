@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "datanomad-review"
-version = "0.1.0"
+version = "0.2.0"
 description = "Open framework + read-only scanners to review data platforms and cloud spend on GCP & AWS."
 readme = "README.md"
 license = {text = "MIT"}
@@ -37,4 +37,8 @@ datanomad-review = "datanomad_review.cli:main"
 where = ["src"]
 
 [tool.setuptools.package-data]
-datanomad_review = ["framework/*.yaml"]
+datanomad_review = [
+    "framework/*.yaml",
+    "examples/sample-dbt-project/*",
+    "examples/sample-dbt-project/models/*/*",
+]

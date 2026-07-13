@@ -3,7 +3,8 @@ import pathlib
 
 from datanomad_review.checks import dbt_project
 
-EXAMPLE = pathlib.Path(__file__).resolve().parents[1] / "examples" / "sample-dbt-project"
+EXAMPLE = (pathlib.Path(__file__).resolve().parents[1]
+           / "src" / "datanomad_review" / "examples" / "sample-dbt-project")
 
 
 def test_scan_sample_project_detects_seeded_antipatterns():
