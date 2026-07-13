@@ -1,6 +1,6 @@
 # datanomad-review
 
-[![PyPI](https://img.shields.io/pypi/v/datanomad-review)](https://pypi.org/project/datanomad-review/)
+[![PyPI](https://img.shields.io/pypi/v/datanomad-review?color=1DB584&cacheSeconds=3600)](https://pypi.org/project/datanomad-review/)
 [![Python](https://img.shields.io/badge/python-3.9%2B-blue)](https://github.com/datanomadlab/datanomad-review)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
